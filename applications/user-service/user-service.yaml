@@ -1,0 +1,75 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: user-service
+  namespace: observability-demo
+  labels:
+    app: user-service
+    logFormat: json
+    monitor: springboot
+    prometheus: user-workloads
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: user-service
+        logFormat: json
+        monitor: springboot
+        prometheus: user-workloads
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: user-service
+          env:
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: MONGODB_USER
+                  name: mongodb-secret
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MONGODB_USER
+                  name: mongodb-secret
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          envFrom:
+            - configMapRef:
+                name: user-service
+          image: 'spencer94/user-service:latest'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

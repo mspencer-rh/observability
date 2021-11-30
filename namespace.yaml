@@ -1,0 +1,31 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: observability-demo
+  labels:
+    kubernetes.io/metadata.name: observability-demo
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: observability-demo-additonal
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - ""
+    resources:
+      - configmaps
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: observability-demo-additonal-rbac
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: observability-demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: observability-demo-additonal

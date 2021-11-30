@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- namespace.yaml
+- applications/mongodb/mongodb-secret.yaml
+- applications/mongodb/mongodb.yaml
+- applications/mongodb/mongodb-svc.yaml
+- applications/user-service/user-service.yaml
+- applications/user-service/user-service-svc.yaml
+- applications/user-service/user-service-cm.yaml
+- applications/observability-demo/observability-demo.yaml
+- applications/observability-demo/observability-demo-svc.yaml
+- applications/observability-demo/observability-demo-route.yaml
+- applications/observability-demo/observability-demo-cm.yaml

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: observability-demo
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        env:
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: MONGODB_USER
+                  name: mongodb-secret
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MONGODB_USER
+                  name: mongodb-secret
+            - name: MONGODB_DATABASE
+              value: 'mongo'
+            - name: MONGODB_ADMIN_PASSWORD
+              value: 'admin'
+        image: registry.access.redhat.com/rhscl/mongodb-26-rhel7
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 27017

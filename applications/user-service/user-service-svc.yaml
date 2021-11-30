@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: user-service
+  namespace: observability-demo
+  labels:
+    app: user-service
+    monitor: springboot
+    prometheus: user-workloads
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: https
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+  selector:
+    app: user-service

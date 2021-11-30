@@ -1,0 +1,63 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: observability-demo
+  namespace: observability-demo
+  labels:
+    app: observability-demo
+    logFormat: json
+    monitor: springboot
+    prometheus: user-workloads
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: observability-demo
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: observability-demo
+        logFormat: json
+        monitor: springboot
+        prometheus: user-workloads
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: observability-demo
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          envFrom:
+            - configMapRef:
+                name: observability-demo
+          image: 'spencer94/observability-demo:latest'
+      restartPolicy: Always

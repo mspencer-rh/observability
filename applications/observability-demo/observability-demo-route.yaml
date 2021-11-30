@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: observability-demo
+  namespace: observability-demo
+spec:
+  to:
+    kind: Service
+    name: observability-demo
+  port:
+    targetPort: http
+  tls:
+    termination: edge

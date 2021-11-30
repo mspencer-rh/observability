@@ -1,0 +1,28 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: user-service
+  namespace: observability-demo
+data:
+  application.properties: >-
+    spring.data.mongodb.uri=mongodb://mongodb-svc:27017/mongo
+
+    spring.data.mongodb.host=mongodb
+
+    spring.data.mongodb.port=27017
+
+    spring.data.mongodb.username=${MONGODB_USER}
+
+    spring.data.mongodb.password=${MONGODB_PASSWORD}
+
+    spring.data.mongodb.database=mongo
+
+    opentracing.jaeger.http-sender.url=http://jaeger-all-in-one-inmemory-collector.jaeger-system.svc:14268/api/traces
+
+    opentracing.jaeger.service-name=observability-demo
+
+    opentracing.jaeger.enabled=true
+    management.metrics.tags.application=${spring.application.name}
+    management.endpoints.web.exposure.include=health,info,prometheus,scheduledtasks
+    management.endpoint.prometheus.enabled=true # Show details of health
+    endpoint management.endpoint.health.show-details=always

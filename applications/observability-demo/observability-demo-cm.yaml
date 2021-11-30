@@ -1,0 +1,24 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: observability-demo
+  namespace: observability-demo
+data:
+  application.properties: >-
+    server.port=8080
+
+    rest.endpoints.user-service=http://user-service:8080
+
+    opentracing.jaeger.http-sender.url=http://jaeger-all-in-one-inmemory-collector.jaeger-system.svc:14268/api/traces
+
+    opentracing.jaeger.service-name=observability-demo
+
+    opentracing.jaeger.enabled=true
+
+    management.endpoints.web.exposure.include=health,info,prometheus,scheduledtasks
+
+    management.endpoint.prometheus.enabled=true
+
+    endpoint management.endpoint.health.show-details=always
+
+    management.metrics.tags.application=${spring.application.name}
